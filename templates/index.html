@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="3">
+    <title>Waste Classifier Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Waste Classifier Dashboard</h1>
+
+        <div class="card">
+            <h2>Latest Result</h2>
+            <p><strong>Time:</strong> {{ data.latest.timestamp }}</p>
+            <p><strong>Status:</strong> {{ data.latest.result.status }}</p>
+            <p><strong>Prediction:</strong> {{ data.latest.result.predicted_class }}</p>
+            <p><strong>Confidence:</strong> {{ data.latest.result.confidence }}</p>
+            <p><strong>Top 2:</strong> {{ data.latest.result.top2_class }} ({{ data.latest.result.top2_confidence }})</p>
+            <p><strong>Inference time:</strong> {{ data.latest.result.inference_time_ms }} ms</p>
+        </div>
+
+        <div class="images">
+            {% if data.latest.original_image %}
+            <div class="card">
+                <h3>Original Image</h3>
+                <img src="{{ data.latest.original_image }}" alt="Original image">
+            </div>
+            {% endif %}
+
+            {% if data.latest.cropped_image %}
+            <div class="card">
+                <h3>Cropped Image</h3>
+                <img src="{{ data.latest.cropped_image }}" alt="Cropped image">
+            </div>
+            {% endif %}
+
+            {% if data.latest.debug_image %}
+            <div class="card">
+                <h3>Debug Image</h3>
+                <img src="{{ data.latest.debug_image }}" alt="Debug image">
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="card">
+            <h2>Last 10 Classifications</h2>
+            <table>
+                <tr>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Prediction</th>
+                    <th>Confidence</th>
+                </tr>
+                {% for item in data.history %}
+                <tr>
+                    <td>{{ item.timestamp }}</td>
+                    <td>{{ item.status }}</td>
+                    <td>{{ item.predicted_class }}</td>
+                    <td>{{ item.confidence }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</body>
+</html>
