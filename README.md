@@ -36,7 +36,7 @@ The project uses the following hardware:
 
 ### 1. LED wiring
 
-![Fritzing setup](hardware/led_setup.png)
+<img src="hardware/led_setup.png" alt="Fritzing setup" width="650">
 
 *Fritzing illustration of the LED wiring on the Raspberry Pi.  
 The PIR sensor and Pi Camera Module 2 are not shown in this diagram and are documented separately with physical photos.*
@@ -61,7 +61,7 @@ Example GPIO setup used in the project:
 
 ### 2. PIR sensor wiring
 
-![PIR sensor](hardware/pi.jpg)
+<img src="hardware/pir.jpg" alt="PIR sensor" width="350">
 
 The PIR sensor is **not shown in the Fritzing image** because the exact component was not available in the library.
 
@@ -77,7 +77,7 @@ The PIR sensor is responsible for detecting movement and triggering the capture/
 
 ### 3. Camera setup
 
-![Pi Camera Module 2](hardware/camera.jpg)
+<img src="hardware/camera.jpg" alt="Pi Camera Module 2" width="350">
 
 The **Pi Camera Module 2** is also **not included in the Fritzing illustration**.
 
