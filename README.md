@@ -26,7 +26,7 @@ The project uses the following hardware:
 - **PIR motion sensor**
 - **Breadboard**
 - **4 LEDs**
-- **4 resistors** (typically 220Ω to 330Ω)
+- **4 resistors** (we used 10kΩ)
 - **Jumper wires**
 - **MicroSD card with Raspberry Pi OS**
 - **Power supply for Raspberry Pi**
@@ -35,6 +35,11 @@ The project uses the following hardware:
 ## Hardware setup
 
 ### 1. LED wiring
+
+![Fritzing setup](hardware/led_setup.png)
+
+*Fritzing illustration of the LED wiring on the Raspberry Pi.  
+The PIR sensor and Pi Camera Module 2 are not shown in this diagram and are documented separately with physical photos.*
 
 The breadboard setup in the Fritzing illustration shows the LED part of the circuit.
 
@@ -53,9 +58,10 @@ Example GPIO setup used in the project:
 | LED 4 | GPIO25 |
 | Common LED ground | GND |
 
-> Important: If your Python code uses different GPIO pins, update this table so the README matches the code.
 
 ### 2. PIR sensor wiring
+
+![PIR sensor](hardware/pi.jpg)
 
 The PIR sensor is **not shown in the Fritzing image** because the exact component was not available in the library.
 
@@ -71,6 +77,8 @@ The PIR sensor is responsible for detecting movement and triggering the capture/
 
 ### 3. Camera setup
 
+![Pi Camera Module 2](hardware/camera.jpg)
+
 The **Pi Camera Module 2** is also **not included in the Fritzing illustration**.
 
 It is connected directly to the Raspberry Pi using the **CSI camera port**, not through the breadboard.
@@ -79,19 +87,6 @@ It is connected directly to the Raspberry Pi using the **CSI camera port**, not 
 - Make sure the cable is inserted in the correct direction
 - Test the camera before running the full project
 
-## About the hardware illustration
-
-The Fritzing diagram is useful for showing the breadboard and LED connections, but it does **not** include all physical components used in the final system.
-
-For the report and GitHub documentation, a good approach is:
-
-1. Use the Fritzing image to document the **LED and GPIO wiring**
-2. Add one or more **real photos** of the full setup
-3. Mention that the **Pi Camera Module 2** and **PIR sensor** are not shown in the Fritzing file because matching parts were unavailable there
-
-Suggested wording for the report:
-
-> The Fritzing illustration documents the LED indication circuit and GPIO wiring on the breadboard. The Pi Camera Module 2 and the PIR motion sensor were not available in the Fritzing component library used for the drawing, and are therefore documented using physical photos and written hardware descriptions instead. The camera is connected through the Raspberry Pi CSI port, while the PIR sensor is connected separately to power, ground and a GPIO input pin.
 
 ## Software required
 
@@ -135,7 +130,6 @@ waste-classifier/
 - **captures/**: saved images from the camera
 - **logs/**: optional log files for debugging and traceability
 
-> If your main file has another name, such as `cocoversjon.py`, replace `main.py` in the commands below.
 
 ## Installation
 
@@ -283,18 +277,6 @@ If the model is missing, the classifier will not work.
 - `tflite-runtime` can be version-sensitive on Raspberry Pi
 - Use the version that matches your OS and Python version
 - If needed, switch to the TensorFlow-based inference path supported by your project
-
-## Suggested images for GitHub and report
-
-A good documentation package is:
-
-- **Fritzing diagram** for LED/breadboard/GPIO wiring
-- **Real photo of the Raspberry Pi + breadboard**
-- **Real photo of the PIR sensor**
-- **Real photo of the Pi Camera Module 2 and CSI cable**
-- **Screenshot of the dashboard**
-
-This gives both a clean technical overview and proof of the real physical setup.
 
 ## Summary
 
