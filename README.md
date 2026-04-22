@@ -113,7 +113,10 @@ waste-classifier/
 ├── app.py
 ├── main.py
 ├── waste_classifier.tflite
+├── coco_detector.tflite
+├── coco_labels.txt
 ├── labels.txt
+├── dashboard_data.json
 ├── static/
 ├── templates/
 ├── captures/
