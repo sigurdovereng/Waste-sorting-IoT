@@ -31,6 +31,9 @@ leds = [plast, organic, glass, paper]
 # =========================
 SAVE_FOLDER = "/home/pi4/Desktop/SF"
 
+LOG_FOLDER = "/home/pi4/Desktop/SF/logs"
+LOG_FILE = f"{LOG_FOLDER}/log.txt"
+
 DETECTOR_MODEL_PATH = "/home/pi4/Desktop/SF/coco_detector.tflite"
 DETECTOR_LABELS_PATH = "/home/pi4/Desktop/SF/coco_labels.txt"
 
@@ -100,6 +103,12 @@ def load_labels(path):
             else:
                 labels[i] = line
     return labels
+
+# Her begynner logging delen
+def write_log(text):
+    os.makedirs(LOG_FOLDER, exist_ok=True)
+    with open(LOG_FILE, "a") as f:
+        f.write(text + "\n")
 
 
 def all_off():
@@ -580,17 +589,31 @@ def process_motion_event():
     timestamp = int(time.time())
     image_path = f"{SAVE_FOLDER}/image_{timestamp}.jpg"
 
+## Logging
+    log_text = ""
+    log_text += f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
+    log_text += f"Image: image_{timestamp}.jpg\n"
+    log_text += "Motion detected: yes\n"
+
+    
+
     print("Capturing image...")
     success = capture_image(image_path)
 
     if not success:
         print("Image capture failed.")
+        log_text += "Image captured: no\n"
+        log_text += "Status: camera_failed\n"
+        log_text += "LED: none\n"
+        write_log(log_text)
         update_dashboard(
             result={"status": "camera_failed", "predicted_class": None, "confidence": None}
         )
         return
 
     print(f"Image captured and saved: {image_path}")
+    log_text += "Image captured: yes\n"
+    log_text += f"File: {image_path}\n"
 
     print("Detecting and cropping object...")
     cropped_path = detect_and_crop_object(image_path)
@@ -598,12 +621,18 @@ def process_motion_event():
 
     if cropped_path is None:
         print("No valid object found. Skipping classification.")
+        log_text += "Object detected: none\n"
+        log_text += "Status: no_object_detected\n"
+        log_text += "LED: none\n"
+        write_log(log_text)
         update_dashboard(
             original_path=image_path,
             debug_path=debug_path if os.path.exists(debug_path) else None,
             result={"status": "no_object_detected", "predicted_class": None, "confidence": None}
         )
         return
+
+    log_text += f"Cropped image: {cropped_path}\n"
 
     print("Sending cropped image to AI...")
 
@@ -616,6 +645,14 @@ def process_motion_event():
 
     print("Final result:", result)
 
+    #Logging
+    log_text += f"AI raw prediction: {result['raw_prediction']}\n"
+    log_text += f"AI mapped to: {result['predicted_class']}\n"
+    log_text += f"Top 1: {result['raw_prediction']} ({int(result['confidence']*100)}%)\n"
+    log_text += f"Top 2: {result['top2_class']} ({int(result['top2_confidence']*100)}%)\n"
+    log_text += f"Margin: {int((result['confidence'] - result['top2_confidence'])*100)}%\n"
+    log_text += f"Status: {result['status']}\n"
+
     update_dashboard(
         original_path=image_path,
         cropped_path=cropped_path,
@@ -624,9 +661,13 @@ def process_motion_event():
     )
 
     if result["status"] == "accepted" and result["predicted_class"] in ["plastic", "organic", "glass", "paper"]:
+        log_text += f"LED: {result['predicted_class']}\n"
+        write_log(log_text)
         show_result(result["predicted_class"])
     else:
         print("No confident or valid prediction.")
+        log_text += "LED: none\n"
+        write_log(log_text)
         all_off()
 
 print("System ready")
