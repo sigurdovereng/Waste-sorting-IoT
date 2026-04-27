@@ -25,9 +25,8 @@ leds = [plast, organic, glass, paper]
 
 
 
-# =========================
+
 # PATHS
-# =========================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 SAVE_FOLDER = BASE_DIR
@@ -56,38 +55,13 @@ IGNORED_CLASSES = {
     "person",
     "dining table",
     "tv",
-    "couch",
-    "car",
-    "bus",
-    "train",
-    "motorcycle",
-    "airplane",
-    "boat"
+    "couch"
 }
 
-LABEL_MAP = {
-    "plast": "plastic",
-    "plastic": "plastic",
-
-    "organisk": "organic",
-    "organic": "organic",
-    "bio": "organic",
-    "food": "organic",
-
-    "papir": "paper",
-    "paper": "paper",
-    "cardboard": "paper",
-
-    "glass": "glass_metall",
-    "glass_metall": "glass_metall",
-    "glass_metal": "glass_metall",
-    "metal": "glass_metall"
-}
-
+VALID_WASTE_CLASSES = ["plastic", "organic", "glass_metal", "paper"]
 
 
 # HELPERS
-
 def load_labels(path):
     labels = {}
     with open(path, "r") as f:
@@ -153,7 +127,7 @@ def show_result(result):
         plast.on()
     elif result == "organic":
         organic.on()
-    elif result == "glass":
+    elif result == "glass_metal":
         glass.on()
     elif result == "paper":
         paper.on()
@@ -162,9 +136,8 @@ def show_result(result):
     all_off()
 
 
-# =========================
+
 # TFLITE OBJECT DETECTOR
-# =========================
 class CocoDetector:
     def __init__(self, model_path, labels_path):
         self.labels = load_labels(labels_path)
@@ -257,9 +230,8 @@ class CocoDetector:
         return results
 
 
-# =========================
+
 # TFLITE CLASSIFIER
-# =========================
 class WasteClassifier:
     def __init__(self, model_path, labels_path):
         with open(labels_path, "r") as f:
@@ -325,9 +297,7 @@ except Exception as e:
     raise
 
 
-# =========================
 # DETECT + CROP
-# =========================
 def detect_and_crop_object(image_path):
     original = cv2.imread(image_path)
 
@@ -433,15 +403,10 @@ def classify_waste_with_details(cropped_image_path):
     top2_class, top2_conf = sorted_predictions[1]
     margin = top1_conf - top2_conf
 
-    predicted_raw = top1_class.strip().lower()
-    mapped_result = LABEL_MAP.get(predicted_raw)
+    predicted_class = top1_class.strip().lower()
 
-    if mapped_result == "glass_metall":
-        dashboard_class = "glass"
-    else:
-        dashboard_class = mapped_result
 
-    if mapped_result is None:
+    if predicted_class not in VALID_WASTE_CLASSES:
         return {
             "status": "invalid_mapping",
             "predicted_class": None,
@@ -455,7 +420,7 @@ def classify_waste_with_details(cropped_image_path):
     if top1_conf < CLASSIFICATION_CONFIDENCE_THRESHOLD:
         return {
             "status": "rejected_low_confidence",
-            "predicted_class": dashboard_class,
+            "predicted_class": predicted_class,
             "raw_prediction": top1_class,
             "confidence": round(top1_conf, 4),
             "top2_class": top2_class,
@@ -466,7 +431,7 @@ def classify_waste_with_details(cropped_image_path):
     if margin < CLASSIFICATION_MARGIN_THRESHOLD:
         return {
             "status": "rejected_low_margin",
-            "predicted_class": dashboard_class,
+            "predicted_class": predicted_class,
             "raw_prediction": top1_class,
             "confidence": round(top1_conf, 4),
             "top2_class": top2_class,
@@ -476,7 +441,7 @@ def classify_waste_with_details(cropped_image_path):
 
     return {
         "status": "accepted",
-        "predicted_class": dashboard_class,
+        "predicted_class": predicted_class,
         "raw_prediction": top1_class,
         "confidence": round(top1_conf, 4),
         "top2_class": top2_class,
@@ -616,7 +581,7 @@ def process_motion_event():
         result=result
     )
 
-    if result["status"] == "accepted" and result["predicted_class"] in ["plastic", "organic", "glass", "paper"]:
+    if result["status"] == "accepted" and result["predicted_class"] in VALID_WASTE_CLASSES:
         log_text += f"LED: {result['predicted_class']}\n"
         write_log(log_text)
         show_result(result["predicted_class"])
