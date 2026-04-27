@@ -1,0 +1,6 @@
+flask
+numpy
+pillow
+opencv-python
+gpiozero
+ai-edge-litert

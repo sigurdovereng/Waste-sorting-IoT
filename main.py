@@ -8,14 +8,12 @@ from PIL import Image
 from ai_edge_litert.interpreter import Interpreter
 import subprocess
 import threading
-## SIGURD DASHBOARD
 import json
 import shutil
 from datetime import datetime
 
-# =========================
+
 # GPIO SETUP
-# =========================
 pir = MotionSensor(17)
 
 plast = LED(22)
@@ -26,28 +24,30 @@ paper = LED(25)
 leds = [plast, organic, glass, paper]
 
 
+
 # =========================
 # PATHS
 # =========================
-SAVE_FOLDER = "/home/pi4/Desktop/SF"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-LOG_FOLDER = "/home/pi4/Desktop/SF/logs"
-LOG_FILE = f"{LOG_FOLDER}/log.txt"
+SAVE_FOLDER = BASE_DIR
 
-DETECTOR_MODEL_PATH = "/home/pi4/Desktop/SF/coco_detector.tflite"
-DETECTOR_LABELS_PATH = "/home/pi4/Desktop/SF/coco_labels.txt"
+LOG_FOLDER = os.path.join(BASE_DIR, "logs")
+LOG_FILE = os.path.join(LOG_FOLDER, "log.txt")
 
-CLASSIFIER_MODEL_PATH = "/home/pi4/Desktop/SF/waste_classifier.tflite"
-CLASSIFIER_LABELS_PATH = "/home/pi4/Desktop/SF/labels.txt"
+DETECTOR_MODEL_PATH = os.path.join(BASE_DIR, "coco_detector.tflite")
+DETECTOR_LABELS_PATH = os.path.join(BASE_DIR, "coco_labels.txt")
+
+CLASSIFIER_MODEL_PATH = os.path.join(BASE_DIR, "waste_classifier.tflite")
+CLASSIFIER_LABELS_PATH = os.path.join(BASE_DIR, "labels.txt")
 
 ## SIGURD DASHBOARD
-DASHBOARD_JSON = "/home/pi4/Desktop/SF/dashboard_data.json"
-LATEST_FOLDER = "/home/pi4/Desktop/SF/static/latest"
+DASHBOARD_JSON = os.path.join(BASE_DIR, "dashboard_data.json")
+LATEST_FOLDER = os.path.join(BASE_DIR, "static", "latest")
 
 
-# =========================
+
 # CONFIG
-# =========================
 DETECTION_CONFIDENCE_THRESHOLD = 0.45
 CLASSIFICATION_CONFIDENCE_THRESHOLD = 0.65
 CLASSIFICATION_MARGIN_THRESHOLD = 0.15
@@ -85,9 +85,9 @@ LABEL_MAP = {
 }
 
 
-# =========================
+
 # HELPERS
-# =========================
+
 def load_labels(path):
     labels = {}
     with open(path, "r") as f:
@@ -408,51 +408,7 @@ def detect_and_crop_object(image_path):
 
 
 
-def classify_waste(cropped_image_path):
-    if cropped_image_path is None:
-        return None
 
-    result = classifier.classify(cropped_image_path)
-
-    sorted_predictions = sorted(
-        result["all_predictions"].items(),
-        key=lambda x: x[1],
-        reverse=True
-    )
-
-    top1_class, top1_conf = sorted_predictions[0]
-    top2_class, top2_conf = sorted_predictions[1]
-    margin = top1_conf - top2_conf
-
-    predicted_raw = top1_class.strip().lower()
-    mapped_result = LABEL_MAP.get(predicted_raw)
-
-    print(f"Raw model prediction: {top1_class}")
-    print(f"Mapped prediction: {mapped_result}")
-    print(f"Confidence: {top1_conf:.2%}")
-    print(f"Second best: {top2_class} ({top2_conf:.2%})")
-    print(f"Margin: {margin:.2%}")
-    print(f"Inference time: {result['inference_time_ms']} ms")
-
-    print("Top predictions:")
-    for cls, prob in sorted_predictions:
-        print(f"  {cls}: {prob:.2%}")
-
-    if mapped_result is None:
-        print("Prediction could not be mapped to a valid waste category.")
-        return None
-
-    if top1_conf < CLASSIFICATION_CONFIDENCE_THRESHOLD:
-        print("Prediction rejected: confidence too low.")
-        return None
-
-    if margin < CLASSIFICATION_MARGIN_THRESHOLD:
-        print("Prediction rejected: top two classes are too close.")
-        return None
-
-    return mapped_result
-
-## SIGURD DASHBOARD -- DENNE BYTTER UT classify_waste SENERE
 def classify_waste_with_details(cropped_image_path):
     if cropped_image_path is None:
         return {
