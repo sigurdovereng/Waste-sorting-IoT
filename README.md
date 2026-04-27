@@ -172,6 +172,9 @@ sudo apt install -y python3-picamera2
 
 Some projects instead rely on `rpicam-still` or older `libcamera` commands.
 
+
+
+
 ## Testing hardware before running the project
 
 ### Test the camera
@@ -240,6 +243,25 @@ This starts the full pipeline:
 5. Dashboard shows the current status/result
 6. Logs can be stored for debugging and traceability
 
+## AI Pipeline
+
+The system uses two TensorFlow Lite models:
+
+1. **COCO Object Detector**
+    - Detects objects in the captured image
+    - Selects the best bounding box
+    - Crops the object area
+
+2. **Waste Classifier**
+    - Receives the cropped image
+    - Predicts one of four classes:
+        - plastic
+        - paper
+        - organic
+        - glass_metal
+
+This two-stage approach improved flexibility and reduced the amount of custom training data required.
+
 ## Notes about TensorFlow Lite
 
 The project depends on a trained `.tflite` model.
@@ -275,6 +297,14 @@ If the model is missing, the classifier will not work.
 - Make sure you install it inside your virtual environment
 - If install fails, check that pip is updated: `pip install --upgrade pip`
 
+## Dataset
+
+The model was trained using a custom dataset combining public waste images and project-specific images captured with the Raspberry Pi camera.
+
+Because image classification performance depends on camera angle, lighting, background, and environment, users reproducing this project are encouraged to collect and train on their own dataset adapted to their setup.
+
+Training code is available in the `/training/` folder.
+
 ## Summary
 
 To run this project, you need:
@@ -287,4 +317,15 @@ To run this project, you need:
 - `app.py` for the dashboard
 - `main.py` for the classification pipeline
 - a valid `.tflite` model and labels file
+- a dataset consisting of multiple images of relevant items in each of the categories
+
+## Additional Documentation
+
+See the `/docs/` folder for more details:
+
+- `docs/trade-offs.md`
+- `docs/model-evaluation/README.md`
+- `docs/model-evaluation/confusion_matrix.png`
+- `docs/model-evaluation/training_history.png`
+
 
