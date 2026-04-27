@@ -101,7 +101,7 @@ You need:
 - Pillow
 - OpenCV
 - `gpiozero` or the GPIO library used in your code
-- TensorFlow Lite support (`tflite-runtime` or equivalent)
+- LiteRT runtime (`ai-edge-litert`) for running the .tflite models
 - Camera support on Raspberry Pi (`rpicam-*`, `libcamera-*`, `picamera2`, or whatever your code uses)
 
 ## Recommended project structure
@@ -152,19 +152,13 @@ source venv/bin/activate
 
 ### 3. Install Python dependencies
 
-Example:
+Install all required Python packages with one command:
 
 ```bash
-pip install flask numpy pillow opencv-python gpiozero
+pip install -r requirements.txt
 ```
 
-For TensorFlow Lite support, install the option that matches your environment:
-
-```bash
-pip install tflite-runtime
-```
-
-If your code uses TensorFlow instead of `tflite-runtime`, install the version that matches your Raspberry Pi OS and Python setup.
+This installs Flask, NumPy, Pillow, OpenCV, gpiozero, and the LiteRT runtime needed to run the `.tflite` models.
 
 ### 4. Install Raspberry Pi camera support
 
@@ -276,10 +270,10 @@ If the model is missing, the classifier will not work.
 - Many PIR modules have adjustable potentiometers for sensitivity and delay
 - Reduce the delay if the sensor stays active too long after motion stops
 
-### TFLite install issues
-- `tflite-runtime` can be version-sensitive on Raspberry Pi
-- Use the version that matches your OS and Python version
-- If needed, switch to the TensorFlow-based inference path supported by your project
+### LiteRT install issues
+- `ai-edge-litert` requires Python 3.9 or newer
+- Make sure you install it inside your virtual environment
+- If install fails, check that pip is updated: `pip install --upgrade pip`
 
 ## Summary
 

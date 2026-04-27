@@ -4,7 +4,8 @@ import os
 
 app = Flask(__name__)
 
-DASHBOARD_JSON = "dashboard_data.json"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DASHBOARD_JSON = os.path.join(BASE_DIR, "dashboard_data.json")
 
 def load_dashboard_data():
     if not os.path.exists(DASHBOARD_JSON):
@@ -21,3 +22,7 @@ def index():
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000
     , debug=False)
+
+
+
+    
