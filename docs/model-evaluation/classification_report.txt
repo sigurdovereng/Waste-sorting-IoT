@@ -1,0 +1,12 @@
+Test Accuracy: 0.9652
+
+              precision    recall  f1-score   support
+
+ glass_metal       0.97      0.96      0.96       325
+     organic       0.98      1.00      0.99        58
+       paper       0.95      0.98      0.96       169
+     plastic       0.97      0.96      0.96       368
+
+    accuracy                           0.97       920
+   macro avg       0.97      0.97      0.97       920
+weighted avg       0.97      0.97      0.97       920
