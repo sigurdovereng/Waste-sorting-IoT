@@ -29,7 +29,8 @@ leds = [plast, organic, glass, paper]
 # PATHS
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-SAVE_FOLDER = BASE_DIR
+SAVE_FOLDER = os.path.join(BASE_DIR, "captured_images")
+os.makedirs(SAVE_FOLDER, exist_ok=True)
 
 LOG_FOLDER = os.path.join(BASE_DIR, "logs")
 LOG_FILE = os.path.join(LOG_FOLDER, "log.txt")
