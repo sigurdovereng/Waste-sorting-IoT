@@ -328,4 +328,8 @@ See the `/docs/` folder for more details:
 - `docs/model-evaluation/confusion_matrix.png`
 - `docs/model-evaluation/training_history.png`
 
+## Demo Video
+Watch here: https://github.com/sigurdovereng/Waste-sorting-IoT/releases/download/v1.0/Waste_Classifier_Demo.mp4
+
+
 
