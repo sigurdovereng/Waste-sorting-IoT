@@ -1,0 +1,22 @@
+# Mac
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+
+# Runtime data (genereres når systemet kjører)
+logs/
+dashboard_data.json
+static/latest/*.jpg
+
+# Bilder fra kameraet
+image_*.jpg
+image_*_cropped.jpg
+image_*_debug.jpg
