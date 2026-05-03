@@ -328,4 +328,8 @@ See the `/docs/` folder for more details:
 - `docs/model-evaluation/confusion_matrix.png`
 - `docs/model-evaluation/training_history.png`
 
+## Demo Video
+The video can be found in DEMO
+
+
 

@@ -24,12 +24,11 @@ paper = LED(25)
 leds = [plast, organic, glass, paper]
 
 
-
-
 # PATHS
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-SAVE_FOLDER = BASE_DIR
+SAVE_FOLDER = os.path.join(BASE_DIR, "captured_images")
+os.makedirs(SAVE_FOLDER, exist_ok=True)
 
 LOG_FOLDER = os.path.join(BASE_DIR, "logs")
 LOG_FILE = os.path.join(LOG_FOLDER, "log.txt")
@@ -78,7 +77,7 @@ def load_labels(path):
                 labels[i] = line
     return labels
 
-# Her begynner logging delen
+# Logging function
 def write_log(text):
     os.makedirs(LOG_FOLDER, exist_ok=True)
     with open(LOG_FILE, "a") as f:
@@ -287,7 +286,7 @@ class WasteClassifier:
         }
 
 
-# Load both models once
+# Load both models
 try:
     detector = CocoDetector(DETECTOR_MODEL_PATH, DETECTOR_LABELS_PATH)
     classifier = WasteClassifier(CLASSIFIER_MODEL_PATH, CLASSIFIER_LABELS_PATH)
@@ -297,7 +296,7 @@ except Exception as e:
     raise
 
 
-# DETECT + CROP
+# Detect and crop
 def detect_and_crop_object(image_path):
     original = cv2.imread(image_path)
 
@@ -463,7 +462,7 @@ def capture_image(image_path):
         print(f"Unexpected camera error: {e}")
         return False
 
-## SIGURD DASHBOARD
+## DASHBOARD
 def update_dashboard(original_path=None, cropped_path=None, debug_path=None, result=None):
     data = {
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -505,7 +504,7 @@ def update_dashboard(original_path=None, cropped_path=None, debug_path=None, res
     with open(DASHBOARD_JSON, "w") as f:
         json.dump(final_data, f, indent=2)
 
-## SIGURD DASHBOARD - OPPDATERT VERSJON
+## DASHBOARD
 def process_motion_event():
     timestamp = int(time.time())
     image_path = f"{SAVE_FOLDER}/image_{timestamp}.jpg"

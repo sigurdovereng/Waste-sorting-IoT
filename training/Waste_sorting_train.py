@@ -1,20 +1,3 @@
-"""
-Waste Sorting Image Classification Model
-
-SSS3000R - Group 4
-Author: Thor
-
-Trains a MobileNetV2-based model to classify waste images into 4 categories:
-glass_metal, organic, paper, plastic.
-
-Workflow:
-1. Load images from category folders
-2. Split into train / validation / test sets
-3. Train with transfer learning (MobileNetV2) + class weighting for imbalance
-4. Evaluate performance (accuracy, confusion matrix, classification report)
-5. Convert to TensorFlow Lite for Raspberry Pi deployment
-"""
-
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -428,7 +411,6 @@ def verify_tflite_model(tflite_path, test_ds, class_names):
 
 
 def save_class_labels(class_names):
-    """Save class labels to a text file for use on Raspberry Pi."""
     labels_path = os.path.join(OUTPUT_DIR, "labels.txt")
     with open(labels_path, "w") as f:
         for name in class_names:
